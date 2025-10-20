@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Uploader Demo</title>
+</head>
+<body>
+  <h2>Upload a File to S3</h2>
+  <input type="file" id="fileInput" />
+  <button onclick="uploadFile()">Upload</button>
+  <p id="status"></p>
+  <p id="fileUrl"></p>
+
+  <script>
+    async function uploadFile() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) {
+        alert('Please select a file!');
+        return;
+      }
+
+      document.getElementById('status').innerText = 'Getting signed URL...';
+
+      // Step 1: Get signed URL from backend
+      const res = await fetch('http://localhost:3000/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, contentType: file.type })
+      });
+
+      const data = await res.json();
+
+      // Step 2: Upload file to S3 using signed URL
+      const upload = await fetch(data.url, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type },
+        body: file
+      });
+
+      if (upload.ok) {
+        document.getElementById('status').innerText = 'Upload successful!';
+        document.getElementById('fileUrl').innerHTML = `<a href="${data.publicUrl}" target="_blank">${data.publicUrl}</a>`;
+      } else {
+        document.getElementById('status').innerText = 'Upload failed!';
+      }
+    }
+  </script>
+</body>
+</html>
