@@ -19,8 +19,6 @@ A minimal web app where a user uploads a file from the browser; the server issue
 - `.env` — placeholder file (do NOT use real keys in the repo)
 - `screenshots/` — upload demo screenshots
 
-## Hosted demo
-(Place your hosted URL here after deployment)
 
 ## Reflection
 I learned how to generate S3 presigned URLs and safely separate secrets from code. The tricky part was fixing CORS and ensuring the frontend and backend are same-origin during testing.
